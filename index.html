@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐠 Denizaltı Todo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Sualtı kabarcıkları -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+
+  <div class="app-wrapper">
+  <!-- ── Giriş / Kayıt ekranı ── -->
+  <div class="container" id="authScreen">
+    <h1>Denizaltı Todo</h1>
+
+    <div class="auth-form">
+      <input type="email"    id="emailInput"    placeholder="E-posta" />
+      <input type="password" id="passwordInput" placeholder="Şifre" />
+      <p class="password-hint">Şifreniz en az 6 karakter olmalıdır.</p>
+      <div class="auth-error" id="authError"></div>
+      <button class="auth-submit" id="loginTab">Giriş Yap</button>
+      <button class="auth-submit secondary" id="registerTab">Kayıt Ol</button>
+      <button class="forgot-btn" id="forgotBtn">Şifremi unuttum</button>
+    </div>
+  </div>
+
+  <!-- ── Şifre sıfırlama ekranı ── -->
+  <div class="container" id="resetScreen" style="display:none">
+    <h1>Denizaltı Todo</h1>
+    <div class="auth-form">
+      <p class="reset-info">Kayıtlı e-postanızı girin, size sıfırlama bağlantısı gönderelim.</p>
+      <input type="email" id="resetEmail" placeholder="E-posta" />
+      <div class="auth-error" id="resetError"></div>
+      <button class="auth-submit" id="resetSendBtn">Bağlantı Gönder</button>
+      <button class="forgot-btn" id="backToLogin">← Geri dön</button>
+    </div>
+  </div>
+
+  <!-- ── Yeni şifre ekranı (e-posta linkinden gelince) ── -->
+  <div class="container" id="newPasswordScreen" style="display:none">
+    <h1>Denizaltı Todo</h1>
+    <div class="auth-form">
+      <p class="reset-info">Yeni şifrenizi belirleyin.</p>
+      <input type="password" id="newPasswordInput" placeholder="Yeni şifre (min. 6 karakter)" />
+      <div class="auth-error" id="newPasswordError"></div>
+      <button class="auth-submit" id="newPasswordSaveBtn">Şifremi Kaydet</button>
+    </div>
+  </div>
+
+  <!-- ── Todo uygulaması ── -->
+  <div class="container" id="appScreen" style="display:none">
+    <h1>Yapılacaklar</h1>
+
+    <div class="user-bar">
+      <span id="userEmail"></span>
+      <button id="signOutBtn">Çıkış</button>
+    </div>
+
+    <div class="input-row">
+      <input type="text" id="todoInput" placeholder="Yeni görev ekle..." />
+      <button id="addBtn">Ekle</button>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">Tümü</button>
+      <button class="filter-btn" data-filter="active">Aktif</button>
+      <button class="filter-btn" data-filter="done">Tamamlanan</button>
+    </div>
+
+    <ul id="todoList"></ul>
+
+    <div class="footer">
+      <span id="remaining"></span>
+      <button id="clearDone">Tamamlananları sil</button>
+    </div>
+  </div>
+
+  </div> <!-- /app-wrapper -->
+
+  <script src="app.js"></script>
+</body>
+</html>

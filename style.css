@@ -1,0 +1,441 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #0d4a5c 0%, #0a2e3d 40%, #1a1030 100%);
+  position: relative;
+  overflow-x: hidden;
+  padding: 40px 16px;
+}
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Sualtı kabarcıkları */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 80%, rgba(255,105,180,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(0,206,209,0.10) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(0,180,200,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Yüzen kabarcıklar */
+.bubble {
+  position: fixed;
+  border-radius: 50%;
+  opacity: 0.18;
+  animation: rise linear infinite;
+  pointer-events: none;
+}
+.bubble:nth-child(1)  { width:14px; height:14px; left:10%; background:#ff69b4; animation-duration:9s;  animation-delay:0s;   bottom:-20px; }
+.bubble:nth-child(2)  { width:22px; height:22px; left:28%; background:#00ced1; animation-duration:13s; animation-delay:2s;   bottom:-20px; }
+.bubble:nth-child(3)  { width:10px; height:10px; left:55%; background:#ff69b4; animation-duration:8s;  animation-delay:4s;   bottom:-20px; }
+.bubble:nth-child(4)  { width:18px; height:18px; left:72%; background:#00ced1; animation-duration:11s; animation-delay:1s;   bottom:-20px; }
+.bubble:nth-child(5)  { width:8px;  height:8px;  left:88%; background:#ff9dce; animation-duration:7s;  animation-delay:3s;   bottom:-20px; }
+.bubble:nth-child(6)  { width:26px; height:26px; left:42%; background:#40e0d0; animation-duration:15s; animation-delay:6s;   bottom:-20px; }
+
+@keyframes rise {
+  0%   { transform: translateY(0)   translateX(0);    opacity: 0.18; }
+  50%  { transform: translateY(-45vh) translateX(12px); opacity: 0.22; }
+  100% { transform: translateY(-100vh) translateX(-8px); opacity: 0; }
+}
+
+.container {
+  position: relative;
+  background: linear-gradient(145deg, rgba(0,50,70,0.85), rgba(10,20,45,0.90));
+  border: 1.5px solid rgba(0,206,209,0.25);
+  border-radius: 20px;
+  box-shadow:
+    0 0 0 1px rgba(255,105,180,0.10),
+    0 8px 40px rgba(0,0,0,0.50),
+    0 0 60px rgba(0,206,209,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  padding: 32px 28px 24px;
+  width: 100%;
+  max-width: 480px;
+  backdrop-filter: blur(12px);
+}
+
+/* Periskop çizgisi üstte */
+.container::before {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #ff69b4, #00ced1);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+
+/* ── Auth ekranı ── */
+.auth-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.auth-tab {
+  width: 100%;
+  padding: 11px;
+  border: 1.5px solid rgba(0,206,209,0.25);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(0,206,209,0.55);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.auth-tab.active {
+  background: linear-gradient(135deg, #ff69b4, #00ced1);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(255,105,180,0.30);
+}
+
+.auth-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(0,206,209,0.70);
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-form input {
+  padding: 11px 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(0,206,209,0.30);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #e0f7fa;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-form input::placeholder { color: rgba(0,206,209,0.35); }
+.auth-form input:focus {
+  border-color: #ff69b4;
+  box-shadow: 0 0 0 3px rgba(255,105,180,0.15);
+}
+
+.password-hint {
+  font-size: 0.78rem;
+  color: rgba(0,206,209,0.45);
+  margin-top: -4px;
+}
+
+.auth-error {
+  display: none;
+  color: #ff9dce;
+  font-size: 0.83rem;
+  text-align: center;
+  padding: 6px 0;
+}
+
+.auth-submit {
+  padding: 12px;
+  background: linear-gradient(135deg, #ff69b4, #e040a0);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255,105,180,0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.auth-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255,105,180,0.50);
+}
+
+.auth-submit:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+.forgot-btn {
+  background: none;
+  border: none;
+  color: rgba(0,206,209,0.45);
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 4px 0;
+  text-align: center;
+  transition: color 0.15s;
+}
+.forgot-btn:hover { color: rgba(0,206,209,0.80); }
+
+.reset-info {
+  font-size: 0.85rem;
+  color: rgba(0,206,209,0.60);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.auth-submit.secondary {
+  background: transparent;
+  border: 1.5px solid rgba(0,206,209,0.40);
+  color: rgba(0,206,209,0.80);
+  box-shadow: none;
+}
+
+.auth-submit.secondary:hover {
+  background: rgba(0,206,209,0.10);
+  box-shadow: none;
+}
+
+/* ── User bar ── */
+.user-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 7px 12px;
+  background: rgba(0,206,209,0.07);
+  border-radius: 8px;
+  border: 1px solid rgba(0,206,209,0.15);
+}
+
+.user-bar span {
+  font-size: 0.82rem;
+  color: rgba(0,206,209,0.65);
+  word-break: break-all;
+}
+
+#signOutBtn {
+  background: none;
+  border: 1px solid rgba(255,105,180,0.35);
+  color: rgba(255,105,180,0.70);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.80rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+#signOutBtn:hover {
+  background: rgba(255,105,180,0.15);
+  color: #ff69b4;
+}
+
+h1 {
+  font-size: 1.55rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 22px;
+  background: linear-gradient(90deg, #ff69b4 20%, #00ced1 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.3px;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.input-row input {
+  flex: 1;
+  padding: 11px 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(0,206,209,0.30);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #e0f7fa;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-row input::placeholder { color: rgba(0,206,209,0.40); }
+
+.input-row input:focus {
+  border-color: #ff69b4;
+  box-shadow: 0 0 0 3px rgba(255,105,180,0.15);
+}
+
+.input-row button {
+  padding: 11px 18px;
+  background: linear-gradient(135deg, #ff69b4, #e040a0);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255,105,180,0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.input-row button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255,105,180,0.50);
+}
+
+.input-row button:active { transform: translateY(0); }
+
+.filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.filter-btn {
+  padding: 6px 14px;
+  border: 1.5px solid rgba(0,206,209,0.30);
+  border-radius: 20px;
+  background: none;
+  font-size: 0.83rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  color: rgba(0,206,209,0.65);
+  transition: all 0.15s;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+  background: linear-gradient(135deg, #00ced1, #009faa);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0,206,209,0.30);
+}
+
+ul#todoList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(0,206,209,0.15);
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.todo-item:hover { border-color: rgba(255,105,180,0.30); }
+.todo-item.done  { opacity: 0.45; }
+
+/* Custom checkbox */
+.todo-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0,206,209,0.55);
+  border-radius: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+  background: transparent;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.todo-item input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #ff69b4, #00ced1);
+  border-color: transparent;
+}
+
+.todo-item input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.todo-item .label {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #cce8ec;
+  word-break: break-word;
+}
+
+.todo-item.done .label {
+  text-decoration: line-through;
+  color: rgba(0,206,209,0.35);
+}
+
+.todo-item .del-btn {
+  background: none;
+  border: none;
+  color: rgba(255,105,180,0.30);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.todo-item .del-btn:hover { color: #ff69b4; }
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  font-size: 0.82rem;
+  color: rgba(0,206,209,0.45);
+}
+
+#clearDone {
+  background: none;
+  border: none;
+  color: rgba(255,105,180,0.45);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: inherit;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+#clearDone:hover { color: #ff69b4; }
+
+.empty {
+  text-align: center;
+  color: rgba(0,206,209,0.30);
+  font-size: 0.9rem;
+  padding: 20px 0;
+}
+
+/* Denizaltı ikonu başlığın yanında */
+h1::before { content: '🐠 '; }
+h1::after  { content: ' 🌊'; }
