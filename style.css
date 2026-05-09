@@ -174,7 +174,16 @@ body {
 }
 
 @media (max-width: 860px) {
-  #schedulePanel { display: none; }
+  #schedulePanel {
+    position: static;
+    width: 100%;
+    max-width: 480px;
+    max-height: 350px;
+    margin: 16px auto 0;
+  }
+  .page-layout {
+    padding-bottom: 24px;
+  }
 }
 
 /* Sualtı kabarcıkları */
