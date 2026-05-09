@@ -174,15 +174,22 @@ body {
 }
 
 @media (max-width: 860px) {
+  .page-layout {
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 24px;
+  }
+  .app-wrapper {
+    order: 1;
+    width: 100%;
+  }
   #schedulePanel {
+    order: 2;
     position: static;
     width: 100%;
     max-width: 480px;
     max-height: 350px;
-    margin: 16px auto 0;
-  }
-  .page-layout {
-    padding-bottom: 24px;
+    margin-top: 32px;
   }
 }
 
