@@ -1,7 +1,100 @@
+const WEATHER_KEY = '56d53893d9c16f0961577d4eb9b8e80c';
 const SUPABASE_URL = 'https://ilwldquqwrseulgdtily.supabase.co';
 const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlsd2xkcXVxd3JzZXVsZ2R0aWx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNDYxNDAsImV4cCI6MjA5MzgyMjE0MH0.HCQHdKFtQyAw__aUKTrpWtTENA-Qu0CNuYLHUC4hsNc';
 
 let session = JSON.parse(localStorage.getItem('sb_session') || 'null');
+
+// ── Altyapı Kadınlar maç verisi (9-15 Mayıs 2026) ────────────────────────────
+
+const ALTYAPI_KADIN = [
+  { ev: 'ORDU 1921 ORDUSPOR',            dep: 'GAZİANTEP ANTEPİASPOR',           tarih: '10.05.2026', saat: '10:00', salon: 'Orduzu Spor Salonu' },
+  { ev: '1071 ANADOLU SK',               dep: 'VEFA SK',                          tarih: '10.05.2026', saat: '10:00', salon: 'Ahmet Aytar' },
+  { ev: 'GÖLCÜK BLD. SPOR',              dep: 'KARABÜK GSİM',                     tarih: '10.05.2026', saat: '11:00', salon: '18 Temmuz' },
+  { ev: 'İZMİR İZEGE SPOR',              dep: 'ANKARA TVF SPOR LİSESİ',           tarih: '10.05.2026', saat: '11:00', salon: 'Şehit Turgut Solak' },
+  { ev: '07 GAZİ SPOR',                  dep: 'KONYA BÜYÜKŞEHİR BLD. SPOR',      tarih: '10.05.2026', saat: '11:00', salon: 'Kalfa' },
+  { ev: 'İZMİR GÖZTEPE S.K.',            dep: 'İSTANBUL GALATASARAY S.K.',        tarih: '10.05.2026', saat: '11:00', salon: 'Yeni Salon' },
+  { ev: 'OSMANCIK BLD. SPOR KULÜBÜ',     dep: 'KUZEYBORU MAXİPİPE',              tarih: '10.05.2026', saat: '11:00', salon: 'Hüseyin Akbaş' },
+  { ev: 'ELAZIĞ GENÇLİKSPOR',           dep: 'KAYSERİ MELİKGAZİ BLD.SPOR',      tarih: '10.05.2026', saat: '12:00', salon: 'Orduzu Spor Salonu' },
+  { ev: 'ESKİŞEHİR ŞEHİR KOLEJİ',       dep: 'SAKARYA SERDİVAN BLD. SPOR',       tarih: '10.05.2026', saat: '12:00', salon: 'Şampiyon Hasan Gemici' },
+  { ev: 'GENÇLİK SK',                    dep: 'ANTEPİA SK',                       tarih: '10.05.2026', saat: '12:00', salon: 'Ahmet Aytar' },
+];
+
+const MONTHS_TR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const DAYS_TR   = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+
+function formatDateTR(tarih) {
+  const [d, m, y] = tarih.split('.');
+  const date = new Date(`${y}-${m}-${d}`);
+  return `${parseInt(d)} ${MONTHS_TR[parseInt(m)-1]} ${y} · ${DAYS_TR[date.getDay()]}`;
+}
+
+function renderSchedule() {
+  const list = document.getElementById('scheduleList');
+  if (!list) return;
+
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const weekEnd = new Date(now); weekEnd.setDate(now.getDate() + 7);
+
+  const byDate = {};
+  ALTYAPI_KADIN.forEach(m => {
+    const [d, mo, y] = m.tarih.split('.');
+    const matchDate = new Date(`${y}-${mo}-${d}`);
+    if (matchDate >= now && matchDate < weekEnd) {
+      (byDate[m.tarih] = byDate[m.tarih] || []).push(m);
+    }
+  });
+
+  const sortedDates = Object.keys(byDate).sort((a, b) => {
+    const toD = s => { const [d,m,y] = s.split('.'); return new Date(`${y}-${m}-${d}`); };
+    return toD(a) - toD(b);
+  });
+
+  if (!sortedDates.length) {
+    list.innerHTML = '<div class="schedule-empty">Bu hafta maç yok</div>';
+    return;
+  }
+
+  list.innerHTML = sortedDates.map(tarih => `
+    <div class="schedule-day-header">${formatDateTR(tarih)}</div>
+    ${byDate[tarih].map(m => `
+      <div class="schedule-match">
+        <div class="schedule-match-top">
+          <span class="schedule-time">${m.saat}</span>
+          <div class="schedule-teams">
+            <span class="schedule-team">${escHtml(m.ev)}</span>
+            <span class="schedule-vs">— vs —</span>
+            <span class="schedule-team">${escHtml(m.dep)}</span>
+          </div>
+        </div>
+        <span class="schedule-salon">📍 ${escHtml(m.salon)}</span>
+      </div>
+    `).join('')}
+  `).join('');
+}
+
+// ── Hava durumu ───────────────────────────────────────────────────────────────
+
+const WEATHER_ICONS = {
+  '01': '☀️', '02': '⛅', '03': '☁️', '04': '☁️',
+  '09': '🌧️', '10': '🌦️', '11': '⛈️', '13': '❄️', '50': '🌫️'
+};
+
+async function loadWeather() {
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=Ankara&appid=${WEATHER_KEY}&units=metric&lang=tr`;
+  applyWeather(await (await fetch(url)).json());
+}
+
+function applyWeather(data) {
+  if (!data || data.cod !== 200) {
+    document.getElementById('weatherWidget').style.display = 'none';
+    return;
+  }
+  const icon = data.weather[0].icon.slice(0, 2);
+  document.getElementById('weatherIcon').textContent  = WEATHER_ICONS[icon] || '🌡️';
+  document.getElementById('weatherTemp').textContent  = Math.round(data.main.temp) + '°C';
+  document.getElementById('weatherDesc').textContent  = data.weather[0].description;
+  document.getElementById('weatherCity').textContent  = data.name;
+}
 let filter = 'all';
 
 // ── API helpers ──────────────────────────────────────────────────────────────
@@ -135,30 +228,34 @@ function setLoading(btn, loading) {
 
 // ── Auth screen ───────────────────────────────────────────────────────────────
 
+function hideAllScreens() {
+  ['authScreen','registerScreen','resetScreen','newPasswordScreen','appScreen']
+    .forEach(id => document.getElementById(id).style.display = 'none');
+}
+
 function showAuth() {
-  document.getElementById('authScreen').style.display       = 'flex';
-  document.getElementById('appScreen').style.display        = 'none';
-  document.getElementById('resetScreen').style.display      = 'none';
-  document.getElementById('newPasswordScreen').style.display = 'none';
+  hideAllScreens();
+  document.getElementById('authScreen').style.display = 'block';
+}
+
+function showRegister() {
+  hideAllScreens();
+  document.getElementById('registerScreen').style.display = 'block';
 }
 
 function showReset() {
-  document.getElementById('authScreen').style.display       = 'none';
-  document.getElementById('resetScreen').style.display      = 'flex';
-  document.getElementById('newPasswordScreen').style.display = 'none';
+  hideAllScreens();
+  document.getElementById('resetScreen').style.display = 'block';
 }
 
 function showNewPassword() {
-  document.getElementById('authScreen').style.display       = 'none';
-  document.getElementById('resetScreen').style.display      = 'none';
-  document.getElementById('newPasswordScreen').style.display = 'flex';
+  hideAllScreens();
+  document.getElementById('newPasswordScreen').style.display = 'block';
 }
 
 function showApp() {
-  document.getElementById('authScreen').style.display       = 'none';
-  document.getElementById('resetScreen').style.display      = 'none';
-  document.getElementById('newPasswordScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display        = 'block';
+  hideAllScreens();
+  document.getElementById('appScreen').style.display = 'block';
   document.getElementById('userEmail').textContent = session.user.email;
   loadTodos();
 }
@@ -208,6 +305,8 @@ async function loadTodos() {
 // ── Event wiring ──────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadWeather();
+  renderSchedule();
 
   const loginTab    = document.getElementById('loginTab');
   const registerTab = document.getElementById('registerTab');
@@ -216,32 +315,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const email    = document.getElementById('emailInput').value.trim();
     const password = document.getElementById('passwordInput').value;
     if (!email || !password) { showError('E-posta ve şifre gerekli.'); return; }
-    const btn = mode === 'login' ? loginTab : registerTab;
-    setLoading(btn, true);
+    setLoading(loginTab, true);
     hideError();
     try {
-      if (mode === 'login') {
-        await signIn(email, password);
-        showApp();
-      } else {
-        const res = await signUp(email, password);
-        if (!res.access_token) {
-          showError('Kayıt başarılı! E-postanızı doğrulayın, ardından giriş yapın.');
-          setLoading(btn, false);
-          return;
-        }
-        session = res;
-        localStorage.setItem('sb_session', JSON.stringify(session));
-        showApp();
-      }
+      await signIn(email, password);
+      showApp();
     } catch (e) {
       showError(e.message);
     }
-    setLoading(btn, false);
+    setLoading(loginTab, false);
   }
 
   loginTab.addEventListener('click', () => handleAuth('login'));
-  registerTab.addEventListener('click', () => handleAuth('register'));
+  registerTab.addEventListener('click', () => { hideError(); showRegister(); });
+
+  // Kayıt ol ekranı
+  document.getElementById('backToLoginFromReg').addEventListener('click', () => {
+    document.getElementById('regError').style.display = 'none';
+    showAuth();
+  });
+
+  document.getElementById('regSubmitBtn').addEventListener('click', async () => {
+    const email    = document.getElementById('regEmail').value.trim();
+    const pass1    = document.getElementById('regPassword').value;
+    const pass2    = document.getElementById('regPasswordConfirm').value;
+    const errEl    = document.getElementById('regError');
+    errEl.style.display = 'none';
+
+    if (!email || !pass1) { errEl.textContent = 'E-posta ve şifre gerekli.'; errEl.style.display = 'block'; return; }
+    if (pass1.length < 6)  { errEl.textContent = 'Şifre en az 6 karakter olmalıdır.'; errEl.style.display = 'block'; return; }
+    if (pass1 !== pass2)   { errEl.textContent = 'Şifreler eşleşmiyor.'; errEl.style.display = 'block'; return; }
+
+    const btn = document.getElementById('regSubmitBtn');
+    setLoading(btn, true);
+    try {
+      const res = await signUp(email, pass1);
+      if (!res.access_token) {
+        errEl.style.color = '#40e0d0';
+        errEl.textContent = 'Kayıt başarılı! E-postanızı doğrulayın, ardından giriş yapın.';
+        errEl.style.display = 'block';
+        setLoading(btn, false);
+        return;
+      }
+      session = res;
+      localStorage.setItem('sb_session', JSON.stringify(session));
+      showApp();
+    } catch (e) {
+      errEl.style.color = '#ff9dce';
+      errEl.textContent = e.message;
+      errEl.style.display = 'block';
+    }
+    setLoading(btn, false);
+  });
 
   // Enter tuşu → giriş yap
   ['emailInput','passwordInput'].forEach(id => {
