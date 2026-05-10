@@ -22,6 +22,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 720px;
 }
 
 /* ── Maç takvimi paneli ── */
@@ -187,7 +189,7 @@ body {
     order: 2;
     position: static;
     width: 100%;
-    max-width: 480px;
+    max-width: 720px;
     max-height: 350px;
     margin-top: 32px;
   }
@@ -238,7 +240,7 @@ body::before {
     inset 0 1px 0 rgba(255,255,255,0.06);
   padding: 32px 28px 24px;
   width: 100%;
-  max-width: 480px;
+  max-width: 720px;
   backdrop-filter: blur(12px);
 }
 
