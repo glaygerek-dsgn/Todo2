@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://glaygerek-dsgn.github.io/Todo2/sitemap.xml
