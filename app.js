@@ -115,6 +115,11 @@ async function api(path, opts = {}) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
+    if (res.status === 401 && session) {
+      session = null;
+      localStorage.removeItem('sb_session');
+      showAuth();
+    }
     throw new Error(err.message || err.error_description || res.statusText);
   }
   const text = await res.text();

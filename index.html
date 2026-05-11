@@ -10,6 +10,7 @@
   <meta property="og:description" content="Sualtı temalı kişisel görev takip uygulaması." />
   <meta property="og:url" content="https://glaygerek-dsgn.github.io/Todo2/" />
   <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐠</text></svg>" />
   <link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
@@ -43,52 +44,52 @@
     <div class="container" id="authScreen">
       <h1>Denizaltı Todo</h1>
 
-      <div class="auth-form">
-        <input type="email"    id="emailInput"    placeholder="E-posta" />
-        <input type="password" id="passwordInput" placeholder="Şifre" />
+      <form class="auth-form" onsubmit="return false">
+        <input type="email"    id="emailInput"    placeholder="E-posta" autocomplete="email" />
+        <input type="password" id="passwordInput" placeholder="Şifre" autocomplete="current-password" />
         <p class="password-hint">Şifreniz en az 6 karakter olmalıdır.</p>
         <div class="auth-error" id="authError"></div>
         <button class="auth-submit" id="loginTab">Giriş Yap</button>
         <button class="auth-submit secondary" id="registerTab">Kayıt Ol</button>
         <button class="forgot-btn" id="forgotBtn">Şifremi unuttum</button>
-      </div>
+      </form>
     </div>
 
     <!-- ── Kayıt ol ekranı ── -->
     <div class="container" id="registerScreen" style="display:none">
       <h1>Denizaltı Todo</h1>
-      <div class="auth-form">
+      <form class="auth-form" onsubmit="return false">
         <p class="reset-info">Yeni hesap oluşturun.</p>
-        <input type="email"    id="regEmail"           placeholder="E-posta" />
-        <input type="password" id="regPassword"        placeholder="Şifre (min. 6 karakter)" />
-        <input type="password" id="regPasswordConfirm" placeholder="Şifre tekrar" />
+        <input type="email"    id="regEmail"           placeholder="E-posta" autocomplete="email" />
+        <input type="password" id="regPassword"        placeholder="Şifre (min. 6 karakter)" autocomplete="new-password" />
+        <input type="password" id="regPasswordConfirm" placeholder="Şifre tekrar" autocomplete="new-password" />
         <div class="auth-error" id="regError"></div>
         <button class="auth-submit" id="regSubmitBtn">Kayıt Ol</button>
         <button class="forgot-btn"  id="backToLoginFromReg">← Geri dön</button>
-      </div>
+      </form>
     </div>
 
     <!-- ── Şifre sıfırlama ekranı ── -->
     <div class="container" id="resetScreen" style="display:none">
       <h1>Denizaltı Todo</h1>
-      <div class="auth-form">
+      <form class="auth-form" onsubmit="return false">
         <p class="reset-info">Kayıtlı e-postanızı girin, size sıfırlama bağlantısı gönderelim.</p>
-        <input type="email" id="resetEmail" placeholder="E-posta" />
+        <input type="email" id="resetEmail" placeholder="E-posta" autocomplete="email" />
         <div class="auth-error" id="resetError"></div>
         <button class="auth-submit" id="resetSendBtn">Bağlantı Gönder</button>
         <button class="forgot-btn" id="backToLogin">← Geri dön</button>
-      </div>
+      </form>
     </div>
 
     <!-- ── Yeni şifre ekranı (e-posta linkinden gelince) ── -->
     <div class="container" id="newPasswordScreen" style="display:none">
       <h1>Denizaltı Todo</h1>
-      <div class="auth-form">
+      <form class="auth-form" onsubmit="return false">
         <p class="reset-info">Yeni şifrenizi belirleyin.</p>
-        <input type="password" id="newPasswordInput" placeholder="Yeni şifre (min. 6 karakter)" />
+        <input type="password" id="newPasswordInput" placeholder="Yeni şifre (min. 6 karakter)" autocomplete="new-password" />
         <div class="auth-error" id="newPasswordError"></div>
         <button class="auth-submit" id="newPasswordSaveBtn">Şifremi Kaydet</button>
-      </div>
+      </form>
     </div>
 
     <!-- ── Todo uygulaması ── -->
